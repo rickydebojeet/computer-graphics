@@ -15,7 +15,7 @@ int X1, X2, Y1, Y2;
 
 /* ------------------------------------------------------- */
 /* Driver Code for the program. Asks for start and end     */
-/* points and calls bresenham's. Return                    */
+/* points and calls Bresenham's Algorithm. Returns 0       */
 /* ------------------------------------------------------- */
 int main(int argc, char *argv[])
 {
