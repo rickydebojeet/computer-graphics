@@ -1,16 +1,17 @@
-/* Digital Differential Analyzer Algorithm for Line Drawing */
+/* Digital Differential Analyzer Algorithm for X2Line Drawing */
 #include <stdio.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
-#include <math.h>
-#include <time.h>
 
 // Function Declarations
 void myInit();
-void delay(int);
 int abs(int);
-void dda(int, int, int, int);
+void dda();
+void reshape(int, int);
+
+// Global Variables
+int X1, X2, Y1, Y2;
 
 /* ------------------------------------------------------- */
 /* Driver Code for the program. Asks for start and end     */
@@ -19,16 +20,15 @@ void dda(int, int, int, int);
 /* ------------------------------------------------------- */
 int main(int argc, char *argv[])
 {
-    int x1, x2, y1, y2;
-    printf("\n Enter x1:\t");
-    scanf("%d", &x1);
-    printf("\n Enter y1:\t");
-    scanf("%d", &y1);
-    printf("\n Enter x2:\t");
-    scanf("%d", &x2);
-    printf("\n Enter y2:\t");
-    scanf("%d", &y2);
-    printf("\nYou have entered:\nStarting Point: (%d, %d)\nEnding Point: (%d, %d)\n", x1, y1, x2, y2);
+    printf("Enter X1:\t");
+    scanf("%d", &X1);
+    printf("Enter Y1:\t");
+    scanf("%d", &Y1);
+    printf("Enter X2:\t");
+    scanf("%d", &X2);
+    printf("Enter Y2:\t");
+    scanf("%d", &Y2);
+    printf("\nYou have entered:\nStarting Point: (%d, %d)\nEnding Point: (%d, %d)\n", X1, Y1, X2, Y2);
     
     // Initialize GLUT Library
     glutInit(&argc, argv);
@@ -43,8 +43,10 @@ int main(int argc, char *argv[])
     // Initialize drawing colors
     myInit();
 
-    // Call the displaying function
-    glutDisplayFunc(dda(x1, y1, x2, y2));
+    // Call the displaying call back function
+    glutDisplayFunc(dda);
+    // Call the reshape call back function
+    glutReshapeFunc(reshape);
     glutMainLoop();
     return 0;
 }
@@ -60,29 +62,6 @@ void myInit()
      
     // Making Fill Color green (in RGB mode), as middle argument is 1.0
     glColor3f(0.0, 1.0, 0.0);
-     
-    // Breadth of picture boundary is 1 pixel
-    // glPointSize(1.0);
-    // glMatrixMode(GL_PROJECTION);
-    // glLoadIdentity();
-     
-    // Setting Window Dimension in X- and Y- direction
-    gluOrtho2D(0, 600, 0, 600);
-}
-
-/* ------------------------------------------------------- */
-/* Function to insert delay in seconds.                    */
-/* ------------------------------------------------------- */
-void delay(int number_of_seconds)
-{
-    // Converting time into milli_seconds
-    int milli_seconds = 1000 * number_of_seconds;
-  
-    // Storing start time
-    clock_t start_time = clock();
-  
-    // Looping till required time is not achieved
-    while (clock() < start_time + milli_seconds);
 }
 
 /* ------------------------------------------------------- */
@@ -105,11 +84,11 @@ int abs(int init)
 /* Function implementing DDA algorith for line generation  */
 /* Takes start and end points and puts it in the screen    */
 /* ------------------------------------------------------- */
-void dda(int x1, int y1, int x2, int y2)
+void dda()
 {
     // Calculates dx & dy values
-    int dx = x2 - x1;
-    int dy = y2 - y1;
+    int dx = X2 - X1;
+    int dy = Y2 - Y1;
 
     // If m < 1 then step = dx else step = dy
     int step = dx;
@@ -124,23 +103,42 @@ void dda(int x1, int y1, int x2, int y2)
     float Xinc = dx / (float) step;
     float Yinc = dy / (float) step;
 
-    float x = x1;
-    float y = y1;
+    float x = X1;
+    float y = Y1;
     
     // Clears buffers to preset values
     glClear(GL_COLOR_BUFFER_BIT);
+    // Resets Modelview Matrix
+    glLoadIdentity();
     // Plot the points
     glBegin(GL_POINTS);
     
-    while (x < x2)
+    for(int k = 0; k < step; k++)
     {
-        glVertex2d(round(x), round(y));
-        printf("(x, y) : (%d, %d)\n", round(x), round(y));
-        x = x1 + Xinc;
-        y = y1 + Yinc;
-        // Delay of 1 second
-        delay(1);
+        // Specify Points
+        glVertex2f(x, y);
+        printf("(x, y) : (%d, %d)\n", (int)(x + 0.5), (int)(y + 0.5));
+        x = x + Xinc;
+        y = y + Yinc;
     }
+    // The points are specified
     glEnd();
     glFlush();
+}
+
+/* ------------------------------------------------------- */
+/* Function to reshape screen properties. Sets orthographic*/
+/* co-ordinates of  Porjection View Matrix                 */
+/* ------------------------------------------------------- */
+void reshape(int w, int h)
+{
+    // Sets the view port same as window
+    glViewport(0, 0, w, h);
+
+    // Switch to Projection View Matrix and reset it
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    // Setting Window Dimension in X- and Y- direction and switching back to Model View Matrix
+    gluOrtho2D(0, 600, 0, 600);
+    glMatrixMode(GL_MODELVIEW);
 }
