@@ -1,4 +1,4 @@
-/* Digital Differential Analyzer Algorithm for X2Line Drawing */
+/* Digital Differential Analyzer Algorithm for Line Drawing */
 #include <stdio.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -10,13 +10,12 @@ int abs(int);
 void dda();
 void reshape(int, int);
 
-// Global Variables
+// Global Variables for start and end points
 int X1, X2, Y1, Y2;
 
 /* ------------------------------------------------------- */
 /* Driver Code for the program. Asks for start and end     */
-/* points and calls dda function by passing those values.  */
-/* Return 0                                                */
+/* points and calls dda function. Return 0                 */
 /* ------------------------------------------------------- */
 int main(int argc, char *argv[])
 {
@@ -29,11 +28,11 @@ int main(int argc, char *argv[])
     printf("Enter Y2:\t");
     scanf("%d", &Y2);
     printf("\nYou have entered:\nStarting Point: (%d, %d)\nEnding Point: (%d, %d)\n", X1, Y1, X2, Y2);
-    
+
     // Initialize GLUT Library
     glutInit(&argc, argv);
     // Set the initial display mode
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitDisplayMode(GLUT_RGB);
     // Set the initial window position and size
     glutInitWindowPosition(0, 0);
     glutInitWindowSize(600, 600);
@@ -59,7 +58,7 @@ void myInit()
 {
     // Making background color to black as first
     glClearColor(0.0, 0.0, 0.0, 1.0);
-     
+
     // Making Fill Color green (in RGB mode), as middle argument is 1.0
     glColor3f(0.0, 1.0, 0.0);
 }
@@ -77,11 +76,11 @@ int abs(int init)
     else
     {
         return (-1 * init);
-    }   
+    }
 }
 
 /* ------------------------------------------------------- */
-/* Function implementing DDA algorith for line generation  */
+/* Function implementing DDA algorithm, for line generation*/
 /* Takes start and end points and puts it in the screen    */
 /* ------------------------------------------------------- */
 void dda()
@@ -100,20 +99,20 @@ void dda()
     // Calculating inital increment values we can see that
     // If m < 1; Xinc = 1 & Yinc = dy / dx [m]
     // If m > 1; Xinc = dx / dy [1 / m] & Yinc = 1
-    float Xinc = dx / (float) step;
-    float Yinc = dy / (float) step;
+    float Xinc = dx / (float)step;
+    float Yinc = dy / (float)step;
 
     float x = X1;
     float y = Y1;
-    
+
     // Clears buffers to preset values
     glClear(GL_COLOR_BUFFER_BIT);
     // Resets Modelview Matrix
     glLoadIdentity();
     // Plot the points
     glBegin(GL_POINTS);
-    
-    for(int k = 0; k < step; k++)
+
+    for (int k = 0; k < step; k++)
     {
         // Specify Points
         glVertex2f(x, y);
