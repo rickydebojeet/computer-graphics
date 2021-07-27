@@ -12,3 +12,6 @@ node_modules
 
 # Ignore vscode files
 .vscode
+
+#Ignore output files
+*.out
