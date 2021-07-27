@@ -7,12 +7,19 @@
 #include <math.h>
 
 // Function Declarations
+// Transformation Functions
+void matrixMultiply(int a[3][3], int b[3][15], int c[3][15]); //For Matrix Multiplication
+void displayMatrix(int a[3][15]);                             //For Displaying Matrix
+void translate(int tx, int ty, int a[3][15], int b[3][15]);   //For Translation Operation
+// Display Functions
 void display(void);
 void reshape(int, int);
+void myInit();
 
 // Global Variables
 int vertexCount;
 int pointMatrix[3][15];
+int resultantMatrix[3][15];
 
 /* ------------------------------------------------------- */
 /* Driver Code for the program. Asks for object and its    */
@@ -21,167 +28,301 @@ int pointMatrix[3][15];
 /* ------------------------------------------------------- */
 int main(char argc, char *argv[])
 {
-    char ch, op;
-    int check = 1;
+    int ch, op;
     int Xcoord[15], Ycoord[15];
-    do
+    printf("\n/* PROGRAM TO TRANSFORM OBJECTS */\n");
+    printf("Please enter the type of object:\n");
+    printf("1.Point\n2.Line\n3.Triangle\n4.Polygon\n");
+    scanf("%d", &ch);
+    switch (ch)
     {
-        int cond = 1;
-        printf("\n/* PROGRAM TO TRANSFORM OBJECTS */\n");
-        printf("Please enter the type of object:\n");
-        printf("1.Point\n2.Line\n 3.Triangle\n4.Polygon\nPRESS 0 TO EXIT\n");
-        ch = getchar();
-        switch (ch)
+    case 1:
+        vertexCount = 1;
+        break;
+    case 2:
+        vertexCount = 2;
+        break;
+    case 3:
+        vertexCount = 3;
+        break;
+    case 4:
+        printf("Enter the number of vertices(1 - 15):\t");
+        scanf("%d", &vertexCount);
+        // Input Checking
+        if (vertexCount < 1 || vertexCount > 15)
         {
-        case 0:
-            check = 0;
-            break;
-        case 1:
-            vertexCount = 1;
-            break;
-        case 2:
-            vertexCount = 2;
-            break;
-        case 3:
-            vertexCount = 3;
-            break;
-        case 4:
-            printf("Enter the number of vertices(1 - 15):\t");
-            scanf("%d", &vertexCount);
-            // Input Checking
-            if (vertexCount < 1 || vertexCount > 15)
-            {
-                printf("\nInvalid input. Try Again\n");
-                continue;
-            }
-            break;
-        default:
-            printf("\nPLEASE ENTER CORRECT OPTION\n");
-            break;
+            printf("\nInvalid input. Try Again\n");
         }
-        
-        // To Exit The Program
-        if (check == 0)
-            break;
+        break;
+    default:
+        printf("\nPLEASE ENTER CORRECT OPTION\n");
+        break;
+    }
 
-        // Take co-ordinates with respect to the objects
-        for (int i = 0; i < vertexCount; i++)
+    // Take co-ordinates with respect to the objects
+    for (int i = 0; i < vertexCount; i++)
+    {
+        printf("\nPlease enter the co-ordinate of the point %d:\n", (i + 1));
+        printf("x:\t");
+        scanf("%d", &Xcoord[i]);
+        printf("y:\t");
+        scanf("%d", &Ycoord[i]);
+    }
+
+    // Form the Point Matrix of the object
+    for (int i = 0; i < vertexCount; i++)
+    {
+        pointMatrix[0][i] = Xcoord[i];
+        pointMatrix[1][i] = Ycoord[i];
+        pointMatrix[2][i] = 1;
+    }
+    printf("\nPlease enter the type of operation to perform:\n");
+    printf("1.Translation\n2.Rotation\n3.Scaling\n4.Reflextion\n");
+    scanf("%d", &op);
+    switch (op)
+    {
+    case 1:;
+        int tx, ty;
+        printf("\nEnter the translation amount in X-axis:\t");
+        scanf("%d", &tx);
+        printf("Enter the translation amount in Y-axis:\t");
+        scanf("%d", &ty);
+        translate(tx, ty, pointMatrix, resultantMatrix);
+        break;
+    case 2:;
+        int selection, degree;
+        printf("\nEnter the rotation amount in degrees:\t");
+        scanf("%d", &degree);
+        printf("\nEnter your rotation selection\n1.About Origin\n2.About 1st Point\n");
+        scanf("%d", &selection);
+        if (selection == 1)
         {
-            printf("\nPlease enter the co-ordinate of the point %d:\n", (i + 1));
-            printf("x:\t");
-            scanf("%d", Xcoord[i]);
-            printf("y:\t");
-            scanf("%d", Ycoord[i]);
-        }
-
-        // Form the Point Matrix of the object
-        for (int i = 0; i < vertexCount; i++)
-        {
-            pointMatrix[0][i] = Xcoord[i];
-            pointMatrix[1][i] = Ycoord[i];
-            pointMatrix[2][i] = 1;
-        }
-
-        do
-        {
-            printf("Please enter the type of operation to perform:\n");
-            printf("1.Translation\n2.Rotation\n 3.Scaling\n4.Reflextion\nPRESS 0 TO GO BACK\n");
-            op = getchar();
-            switch (op)
-            {
-            case 0:
-                cond = 0; 
-                break;
-            case 1:
-                int x, y;
-                printf("\nEnter the translation amount in X-axis:\t");
-                scanf("%d", &x);
-                printf("\nEnter the translation amount in Y-axis:\t");
-                scanf("%d", &y);
-                /* code */
-                break;
-            case 2:
-                int choice, degree;
-                printf("\nEnter the rotation amount in degrees:\t");
-                scanf("%d", &degree);
-                printf("\nEnter your rotation choice\n1.About Origin\n2.About 1st Point\n");
-                scanf("%d", &choice);
-                if (choice == 1)
-                {
-                    /* code */
-                }
-                else if (choice == 2)
-                {
-                    /* code */
-                }
-                else
-                {
-                    printf("\nWrong Input. Try Again.\n");
-                    continue;
-                }
-                break;
-            case 3:
-                int x, y;
-                printf("\nEnter the scale amount in X-axis:\t");
-                scanf("%d", &x);
-                printf("\nEnter the scale amount in Y-axis:\t");
-                scanf("%d", &y);
-                /* code */
-                break;
-            case 4:
-                int choice, x1, y1, x2, y2;
-                printf("\nEnter your reflection choice:\n");
-                printf("1.About X-axis\n2.About Y-axis\nAbout a line\n");
-                scanf("%d", &choice);
-                if (choice == 1)
-                {
-                    /* code */
-                }
-                else if (choice == 2)
-                {
-                    /* code */
-                }
-                else if (choice == 3)
-                {
-                    /* code */
-                }
-                else
-                {
-                    printf("\nWrong Input. Try Again.\n");
-                    continue;
-                }
-                break;
-            default:
-                printf("\nPLEASE ENTER CORRECT OPTION\n");
-                break;
-            }
-
-            // To go back
-            if (cond == 0)
-                break;
-            
-            // Diplay Point and Resultant Matrix
             /* code */
+        }
+        else if (selection == 2)
+        {
+            /* code */
+        }
+        else
+        {
+            printf("\nWrong Input. Try Again.\n");
+        }
+        break;
+    case 3:;
+        int x, y;
+        printf("\nEnter the scale amount in X-axis:\t");
+        scanf("%d", &x);
+        printf("\nEnter the scale amount in Y-axis:\t");
+        scanf("%d", &y);
+        /* code */
+        break;
+    case 4:;
+        int choice, x1, y1, x2, y2;
+        printf("\nEnter your reflection selection:\n");
+        printf("1.About X-axis\n2.About Y-axis\nAbout a line\n");
+        scanf("%d", &choice);
+        if (choice == 1)
+        {
+            /* code */
+        }
+        else if (choice == 2)
+        {
+            /* code */
+        }
+        else if (choice == 3)
+        {
+            /* code */
+        }
+        else
+        {
+            printf("\nWrong Input. Try Again.\n");
+        }
+        break;
+    default:
+        printf("\nPLEASE ENTER CORRECT OPTION\n");
+        break;
+    }
 
-            // Initialize GLUT Library
-            glutInit(&argc, argv);
-            // Set the initial display mode
-            glutInitDisplayMode(GLUT_RGB);
-            // Set the initial window position and size
-            glutInitWindowPosition(0, 0);
-            glutInitWindowSize(600, 600);
-            // Create the window with title "Window name"
-            glutCreateWindow("Window name");
+    // Diplay Point and Resultant Matrix
+    printf("\nOriginal Point Matrix:\n");
+    displayMatrix(pointMatrix);
+    printf("\nNew Point Matrix:\n");
+    displayMatrix(resultantMatrix);
 
-            // Initialize drawing colors
-            myInit();
+    // Initialize GLUT Library
+    glutInit(&argc, argv);
+    // Set the initial display mode
+    glutInitDisplayMode(GLUT_RGB);
+    // Set the initial window position and size
+    glutInitWindowPosition(0, 0);
+    glutInitWindowSize(600, 600);
+    // Create the window with title "Window name"
+    glutCreateWindow("Transformation Operation");
 
-            // Call the displaying call back function
-            glutDisplayFunc(display);
-            // Call the reshape call back function
-            glutReshapeFunc(reshape);
-            glutMainLoop();
-        } while (1); 
-    } while (1);
+    // Initialize drawing colors
+    myInit();
+
+    // Call the displaying call back function
+    glutDisplayFunc(display);
+    // Call the reshape call back function
+    glutReshapeFunc(reshape);
+    glutMainLoop();
     return 0;
+}
+
+/* ------------------------------------------------------- */
+/* Function  for matrix multiplication. Asks for 3 matric- */
+/* -es. Multiplies first 2 matrices and puts the result in */
+/* third matrix.                                           */
+/* ------------------------------------------------------- */
+void matrixMultiply(int a[3][3], int b[3][15], int c[3][15])
+{
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < vertexCount; j++)
+        {
+            c[i][j] = 0;
+            for (int k = 0; k < 3; k++)
+            {
+                c[i][j] += (a[i][k] * b[k][j]);
+            }
+        }
+    }
+}
+
+/* ------------------------------------------------------- */
+/* Function for displaying matrix. Asks for a matrix and   */
+/* Prints the result in the screen                         */
+/* ------------------------------------------------------- */
+void displayMatrix(int a[3][15])
+{
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < vertexCount; j++)
+        {
+            printf("%d\t", a[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n\n");
+}
+
+/* ------------------------------------------------------- */
+/* Function for Translation Operation. Asks for translation*/
+/* Values, point matrix and resultant matrix and does the  */
+/* Translation operation.                                  */
+/* ------------------------------------------------------- */
+void translate(int tx, int ty, int a[3][15], int b[3][15])
+{
+    int t[3][3]; //Translation Matrix
+    //Initialising Translation Matrix
+    t[0][0] = 1;
+    t[0][1] = 0;
+    t[0][2] = tx;
+    t[1][0] = 0;
+    t[1][1] = 1;
+    t[1][2] = ty;
+    t[2][0] = 0;
+    t[2][1] = 0;
+    t[2][2] = 1;
+    matrixMultiply(t, a, b);
+}
+
+/* ------------------------------------------------------- */
+/* Function to initialize. Sets clear color, fill color    */
+/* and other OpenGL properties                             */
+/* ------------------------------------------------------- */
+void myInit()
+{
+    // Making background color to black as first
+    glClearColor(0.0, 0.0, 0.0, 1.0);
+}
+
+/* ------------------------------------------------------- */
+/* Function for drawing the figures by using openGL        */
+/* ------------------------------------------------------- */
+void display()
+{
+    // Clears buffers to preset values
+    glClear(GL_COLOR_BUFFER_BIT);
+    // Resets Modelview Matrix
+    glLoadIdentity();
+
+    // Plot the 2d Cartesian plane
+    glBegin(GL_LINES);
+    // Making Fill Color White (in RGB mode)
+    glColor3f(1.0, 1.0, 1.0);
+    // The points are specified
+    glVertex2i(0, 300);
+    glVertex2i(0, -300);
+    glVertex2i(300, 0);
+    glVertex2i(-300, 0);
+    glEnd();
+
+    // Storing the values of old and new onjects for plotting
+    int originx[vertexCount], originy[vertexCount], newx[vertexCount], newy[vertexCount];
+    for (int i = 0; i < vertexCount; i++)
+    {
+        originx[i] = pointMatrix[0][i];
+        originy[i] = pointMatrix[1][i];
+        newx[i] = resultantMatrix[0][i];
+        newy[i] = resultantMatrix[1][i];
+    }
+
+    // Code for the glBegin
+    int code;
+
+    switch (vertexCount)
+    {
+    case 1:
+        code = GL_POINTS;
+        break;
+
+    case 2:
+        code = GL_LINES;
+        break;
+
+    default:
+        code = GL_LINE_LOOP;
+        break;
+    }
+
+    // Plot the original 2d Object
+    glBegin(code);
+    // Making Fill Color of Original object Red (in RGB mode)
+    glColor3f(1.0, 0.0, 0.0);
+    for (int i = 0; i < vertexCount; i++)
+    {
+        glVertex2i(originx[i], originy[i]);
+    }
+    glEnd();
+
+    // Plot the new 2d Object
+    glBegin(code);
+    // Making Fill Color of new object blue (in RGB mode)
+    glColor3f(0.0, 0.0, 1.0);
+    for (int i = 0; i < vertexCount; i++)
+    {
+        glVertex2i(newx[i], newy[i]);
+    }
+    glEnd();
+
+    glFlush();
+}
+
+/* ------------------------------------------------------- */
+/* Function to reshape screen properties. Sets orthographic*/
+/* co-ordinates of  Porjection View Matrix                 */
+/* ------------------------------------------------------- */
+void reshape(int w, int h)
+{
+    // Sets the view port same as window
+    glViewport(0, 0, w, h);
+
+    // Switch to Projection View Matrix and reset it
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    // Setting Window Dimension in X- and Y- direction and switching back to Model View Matrix
+    gluOrtho2D(-300, 300, -300, 300);
+    glMatrixMode(GL_MODELVIEW);
 }
