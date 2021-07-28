@@ -6,11 +6,16 @@
 #include <GL/glut.h>
 #include <math.h>
 
+#define PI 3.14159265359
+
 // Function Declarations
-// Transformation Functions
+// Utility Functions
 void matrixMultiply(int a[3][3], int b[3][15], int c[3][15]); //For Matrix Multiplication
-void displayMatrix(int a[3][15]);                             //For Displaying Matrix
-void translate(int tx, int ty, int a[3][15], int b[3][15]);   //For Translation Operation
+void doubleMatrixMultiply(double a[3][3], double b[3][15], double c[3][15]);
+void displayMatrix(int a[3][15]); //For Displaying Matrix
+//Translation Functions
+void translate(int tx, int ty, int a[3][15], int b[3][15]);  //For Translation Operation
+void rotationOrigin(int degree, int a[3][15], int b[3][15]); //For Rotation about Origin
 // Display Functions
 void display(void);
 void reshape(int, int);
@@ -97,7 +102,7 @@ int main(char argc, char *argv[])
         scanf("%d", &selection);
         if (selection == 1)
         {
-            /* code */
+            rotationOrigin(degree, pointMatrix, resultantMatrix);
         }
         else if (selection == 2)
         {
@@ -190,6 +195,21 @@ void matrixMultiply(int a[3][3], int b[3][15], int c[3][15])
     }
 }
 
+void doubleMatrixMultiply(double a[3][3], double b[3][15], double c[3][15])
+{
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < vertexCount; j++)
+        {
+            c[i][j] = 0;
+            for (int k = 0; k < 3; k++)
+            {
+                c[i][j] += (a[i][k] * b[k][j]);
+            }
+        }
+    }
+}
+
 /* ------------------------------------------------------- */
 /* Function for displaying matrix. Asks for a matrix and   */
 /* Prints the result in the screen                         */
@@ -226,6 +246,55 @@ void translate(int tx, int ty, int a[3][15], int b[3][15])
     t[2][1] = 0;
     t[2][2] = 1;
     matrixMultiply(t, a, b);
+}
+
+/* ------------------------------------------------------- */
+/* Function for Rotation Operation about origin. Asks for  */
+/* degree, point matrix and resultant matrix. Does the ro- */
+/* -tation operation about origin and stores it in the re- */
+/* -sultant matrix                                         */
+/* ------------------------------------------------------- */
+void rotationOrigin(int degree, int a[3][15], int b[3][15])
+{
+    // Converting degree into radians
+    double radian = (((double)degree) * PI) / 180.0;
+
+    double r[3][3]; //Rotation Matrix
+    // Initialising Rotation Matrix
+    r[0][0] = cos(radian);
+    r[0][1] = sin(radian);
+    r[0][2] = 0;
+    r[1][0] = -sin(radian);
+    r[1][1] = cos(radian);
+    r[1][2] = 0;
+    r[2][0] = 0;
+    r[2][1] = 0;
+    r[2][2] = 1;
+
+    // Temporary double variables
+    double init[3][15], final[3][15];
+
+    // Initialising the temporary double variables
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 15; j++)
+        {
+            init[i][j] = a[i][j];
+            final[i][j] = b[i][j];
+        }
+    }
+
+    // Doing the rotation operation
+    doubleMatrixMultiply(r, init, final);
+
+    // Storing the final results
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 15; j++)
+        {
+            b[i][j] = final[i][j];
+        }
+    }
 }
 
 /* ------------------------------------------------------- */
