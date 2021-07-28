@@ -14,8 +14,9 @@ void matrixMultiply(int a[3][3], int b[3][15], int c[3][15]); //For Matrix Multi
 void doubleMatrixMultiply(double a[3][3], double b[3][15], double c[3][15]);
 void displayMatrix(int a[3][15]); //For Displaying Matrix
 //Translation Functions
-void translate(int tx, int ty, int a[3][15], int b[3][15]);  //For Translation Operation
-void rotationOrigin(int degree, int a[3][15], int b[3][15]); //For Rotation about Origin
+void translate(int tx, int ty, int a[3][15], int b[3][15]);   //For Translation Operation
+void rotationOrigin(int degree, int a[3][15], int b[3][15]);  //For Rotation about Origin
+void rotationPoint(int degree, int a[3][15], int b[3][15]);   //For Rotation about First Point
 // Display Functions
 void display(void);
 void reshape(int, int);
@@ -106,7 +107,7 @@ int main(char argc, char *argv[])
         }
         else if (selection == 2)
         {
-            /* code */
+            rotationPoint(degree, pointMatrix, resultantMatrix);
         }
         else
         {
@@ -114,11 +115,11 @@ int main(char argc, char *argv[])
         }
         break;
     case 3:;
-        int x, y;
+        double sx, sy;
         printf("\nEnter the scale amount in X-axis:\t");
-        scanf("%d", &x);
+        scanf("%lf", &sx);
         printf("\nEnter the scale amount in Y-axis:\t");
-        scanf("%d", &y);
+        scanf("%lf", &sy);
         /* code */
         break;
     case 4:;
@@ -296,6 +297,28 @@ void rotationOrigin(int degree, int a[3][15], int b[3][15])
         }
     }
 }
+
+/* ------------------------------------------------------- */
+/* Function for Rotation Operation about first point. Asks */
+/* for degree, point matrix and resultant matrix and does  */
+/* rotation operation about first point and stores it in   */
+/* the resultant matrix                                    */
+/* ------------------------------------------------------- */
+void rotationPoint(int degree, int a[3][15], int b[3][15])
+{
+    // Temporary Matrix to store intermediate values
+    int temp1[3][15], temp2[3][15];
+
+    // Step 1: Shift/Translation where T(-firstxcoord, -firstycoord)
+    translate(-a[0][0], -a[1][0], a, temp1);
+
+    // Step 2: Rotation about origin with R(degree)
+    rotationOrigin(degree, temp1, temp2);
+
+    // Step 3: Shift/Translation where T(firstxcoord, firstycoord)
+    translate(a[0][0], a[1][0], temp2, b);
+}
+
 
 /* ------------------------------------------------------- */
 /* Function to initialize. Sets clear color, fill color    */
