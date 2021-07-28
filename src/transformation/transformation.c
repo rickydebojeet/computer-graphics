@@ -14,12 +14,13 @@ void matrixMultiply(int a[3][3], int b[3][15], int c[3][15]); //For Matrix Multi
 void doubleMatrixMultiply(double a[3][3], double b[3][15], double c[3][15]);
 void displayMatrix(int a[3][15]); //For Displaying Matrix
 //Translation Functions
-void translate(int tx, int ty, int a[3][15], int b[3][15]);   //For Translation Operation
-void rotationOrigin(int degree, int a[3][15], int b[3][15]);  //For Rotation about Origin
-void rotationPoint(int degree, int a[3][15], int b[3][15]);   //For Rotation about First Point
-void scale(double sx, double sy, int a[3][15], int b[3][15]); //For Scaling Operation
-void reflectionx(int a[3][15], int b[3][15]);                 //For Reflection about x axis
-void reflectiony(int a[3][15], int b[3][15]);                 //For Reflection about y axis
+void translate(int tx, int ty, int a[3][15], int b[3][15]);          //For Translation Operation
+void rotationOrigin(int degree, int a[3][15], int b[3][15]);         //For Rotation about Origin
+void rotationPoint(int degree, int a[3][15], int b[3][15]);          //For Rotation about First Point
+void scale(double sx, double sy, int a[3][15], int b[3][15]);        //For Scaling Operation
+void reflectionx(int a[3][15], int b[3][15]);                        //For Reflection about x axis
+void reflectiony(int a[3][15], int b[3][15]);                        //For Reflection about y axis
+void reflectionLine(double m, double c, int a[3][15], int b[3][15]); //For Reflection about a line
 // Display Functions
 void display(void);
 void reshape(int, int);
@@ -128,7 +129,7 @@ int main(char argc, char *argv[])
     case 4:;
         int choice, x1, y1, x2, y2;
         printf("\nEnter your reflection selection:\n");
-        printf("1.About X-axis\n2.About Y-axis\nAbout a line\n");
+        printf("1.About X-axis\n2.About Y-axis\n3. About a line\n");
         scanf("%d", &choice);
         if (choice == 1)
         {
@@ -140,7 +141,12 @@ int main(char argc, char *argv[])
         }
         else if (choice == 3)
         {
-            /* code */
+            double m, c;
+            printf("\nIf the line is represented as y = mx + c, then\nm:\t");
+            scanf("%lf", &m);
+            printf("c:\t");
+            scanf("%lf", &c);
+            reflectionLine(m, c, pointMatrix, resultantMatrix);
         }
         else
         {
@@ -368,9 +374,9 @@ void scale(double sx, double sy, int a[3][15], int b[3][15])
 }
 
 /* ------------------------------------------------------- */
-/* Function for Reflection Operationa about x axis.Asks for*/
-/* point matrix and resultant matrix and does scaling op   */
-/* and stores it in resultant matrix                       */
+/* Function for Reflection Operation about xaxis. Asks for */
+/* point matrix and resultant matrix and does reflection   */
+/* operation and stores it in the resultant matrix         */
 /* ------------------------------------------------------- */
 void reflectionx(int a[3][15], int b[3][15])
 {
@@ -386,14 +392,14 @@ void reflectionx(int a[3][15], int b[3][15])
     rfx[2][1] = 0;
     rfx[2][2] = 1;
 
-    // Refection Operation    
+    // Refection Operation
     matrixMultiply(rfx, a, b);
 }
 
 /* ------------------------------------------------------- */
-/* Function for Reflection Operationa about yaxis.Asks for */
-/* point matrix and resultant matrix and does scaling op   */
-/* and stores it in resultant matrix                       */
+/* Function for Reflection Operation about yaxis. Asks for */
+/* point matrix and resultant matrix and does reflection   */
+/* operation and stores it in the resultant matrix         */
 /* ------------------------------------------------------- */
 void reflectiony(int a[3][15], int b[3][15])
 {
@@ -409,8 +415,40 @@ void reflectiony(int a[3][15], int b[3][15])
     rfy[2][1] = 0;
     rfy[2][2] = 1;
 
-    // Refection Operation    
+    // Refection Operation
     matrixMultiply(rfy, a, b);
+}
+
+/* ------------------------------------------------------- */
+/* Function for Reflection Operation about a line.Asks for */
+/* m, c, point matrix and resultant matrix and does refl-  */
+/* -ection operation and stores result in resultant matrix */
+/* ------------------------------------------------------- */
+void reflectionLine(double m, double c, int a[3][15], int b[3][15])
+{
+    // Temporary Matrix to store intermediate values
+    int temp1[3][15], temp2[3][15], temp3[3][15], temp4[3][15], degree;
+
+    // Step 1: Shift/Translation where T(0, -c)
+    translate(0, -c, a, temp1);
+    printf("\nAfter Translation:\n");
+
+    // Step 2: Rotation about origin with R(-degree) where tan(degree) = m
+    double radian = atan(m);
+    degree = radian * 180 / PI;
+    printf("\nDegree: %d\n", degree);
+    rotationOrigin(degree, temp1, temp2);
+    printf("\nAfter Rotation:\n");
+
+    // Step 3: Reflection about x - axis
+    reflectionx(temp2, temp3);
+    printf("\nAfter Reflection\n");
+
+    //Step 4: Rotation about origin with R(degree) where tan(degree) = m
+    rotationOrigin(-degree, temp3, temp4);
+
+    // Step 5: Shift/Translation where T(0, c)
+    translate(0, c, temp4, b);
 }
 
 
