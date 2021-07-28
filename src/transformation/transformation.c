@@ -17,7 +17,8 @@ void displayMatrix(int a[3][15]); //For Displaying Matrix
 void translate(int tx, int ty, int a[3][15], int b[3][15]);   //For Translation Operation
 void rotationOrigin(int degree, int a[3][15], int b[3][15]);  //For Rotation about Origin
 void rotationPoint(int degree, int a[3][15], int b[3][15]);   //For Rotation about First Point
-void scale(double sx, double sy, int a[3][15], int b[3][15]); //For Scalingg Operation
+void scale(double sx, double sy, int a[3][15], int b[3][15]); //For Scaling Operation
+void reflectionx(int a[3][15], int b[3][15]);                 //For Reflection about x axis
 // Display Functions
 void display(void);
 void reshape(int, int);
@@ -130,7 +131,7 @@ int main(char argc, char *argv[])
         scanf("%d", &choice);
         if (choice == 1)
         {
-            /* code */
+            reflectionx(pointMatrix, resultantMatrix);
         }
         else if (choice == 2)
         {
@@ -320,7 +321,6 @@ void rotationPoint(int degree, int a[3][15], int b[3][15])
     translate(a[0][0], a[1][0], temp2, b);
 }
 
-
 /* ------------------------------------------------------- */
 /* Function for Scale Operation. Asks for scale about x,   */
 /* y, point matrix and resultant matrix and does scaling   */
@@ -355,7 +355,7 @@ void scale(double sx, double sy, int a[3][15], int b[3][15])
 
     // Doing the scaling operation
     doubleMatrixMultiply(s, init, final);
-    
+
     // Storing the final results
     for (int i = 0; i < 3; i++)
     {
@@ -365,6 +365,30 @@ void scale(double sx, double sy, int a[3][15], int b[3][15])
         }
     }
 }
+
+/* ------------------------------------------------------- */
+/* Function for Reflection Operationa about axis. Asks for */
+/* point matrix and resultant matrix and does scaling op   */
+/* and stores it in resultant matrix                       */
+/* ------------------------------------------------------- */
+void reflectionx(int a[3][15], int b[3][15])
+{
+    int rfx[3][3]; // Rotation Matrix
+    // Initialising Rotation Matrix
+    rfx[0][0] = 1;
+    rfx[0][1] = 0;
+    rfx[0][2] = 0;
+    rfx[1][0] = 0;
+    rfx[1][1] = -1;
+    rfx[1][2] = 0;
+    rfx[2][0] = 0;
+    rfx[2][1] = 0;
+    rfx[2][2] = 1;
+
+    // Refection Operation    
+    matrixMultiply(rfx, a, b);
+}
+
 
 /* ------------------------------------------------------- */
 /* Function to initialize. Sets clear color, fill color    */
