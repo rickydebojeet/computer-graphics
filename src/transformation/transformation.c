@@ -17,6 +17,7 @@ void displayMatrix(int a[3][15]); //For Displaying Matrix
 void translate(int tx, int ty, int a[3][15], int b[3][15]);   //For Translation Operation
 void rotationOrigin(int degree, int a[3][15], int b[3][15]);  //For Rotation about Origin
 void rotationPoint(int degree, int a[3][15], int b[3][15]);   //For Rotation about First Point
+void scale(double sx, double sy, int a[3][15], int b[3][15]); //For Scalingg Operation
 // Display Functions
 void display(void);
 void reshape(int, int);
@@ -118,9 +119,9 @@ int main(char argc, char *argv[])
         double sx, sy;
         printf("\nEnter the scale amount in X-axis:\t");
         scanf("%lf", &sx);
-        printf("\nEnter the scale amount in Y-axis:\t");
+        printf("Enter the scale amount in Y-axis:\t");
         scanf("%lf", &sy);
-        /* code */
+        scale(sx, sy, pointMatrix, resultantMatrix);
         break;
     case 4:;
         int choice, x1, y1, x2, y2;
@@ -319,6 +320,51 @@ void rotationPoint(int degree, int a[3][15], int b[3][15])
     translate(a[0][0], a[1][0], temp2, b);
 }
 
+
+/* ------------------------------------------------------- */
+/* Function for Scale Operation. Asks for scale about x,   */
+/* y, point matrix and resultant matrix and does scaling   */
+/* operation and stores it in resultant matrix             */
+/* ------------------------------------------------------- */
+void scale(double sx, double sy, int a[3][15], int b[3][15])
+{
+    double s[3][3]; //Scaling Matrix
+    // Initialising Scaling Matrix
+    s[0][0] = sx;
+    s[0][1] = 0;
+    s[0][2] = 1;
+    s[1][0] = 0;
+    s[1][1] = sy;
+    s[1][2] = 0;
+    s[2][0] = 0;
+    s[2][1] = 0;
+    s[2][2] = 1;
+
+    // Temporary double variables
+    double init[3][15], final[3][15];
+
+    // Initialising the temporary double variables
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 15; j++)
+        {
+            init[i][j] = a[i][j];
+            final[i][j] = b[i][j];
+        }
+    }
+
+    // Doing the scaling operation
+    doubleMatrixMultiply(s, init, final);
+    
+    // Storing the final results
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 15; j++)
+        {
+            b[i][j] = final[i][j];
+        }
+    }
+}
 
 /* ------------------------------------------------------- */
 /* Function to initialize. Sets clear color, fill color    */
