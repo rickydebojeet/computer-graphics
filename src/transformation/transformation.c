@@ -19,6 +19,7 @@ void rotationOrigin(int degree, int a[3][15], int b[3][15]);  //For Rotation abo
 void rotationPoint(int degree, int a[3][15], int b[3][15]);   //For Rotation about First Point
 void scale(double sx, double sy, int a[3][15], int b[3][15]); //For Scaling Operation
 void reflectionx(int a[3][15], int b[3][15]);                 //For Reflection about x axis
+void reflectiony(int a[3][15], int b[3][15]);                 //For Reflection about y axis
 // Display Functions
 void display(void);
 void reshape(int, int);
@@ -135,7 +136,7 @@ int main(char argc, char *argv[])
         }
         else if (choice == 2)
         {
-            /* code */
+            reflectiony(pointMatrix, resultantMatrix);
         }
         else if (choice == 3)
         {
@@ -367,7 +368,7 @@ void scale(double sx, double sy, int a[3][15], int b[3][15])
 }
 
 /* ------------------------------------------------------- */
-/* Function for Reflection Operationa about axis. Asks for */
+/* Function for Reflection Operationa about x axis.Asks for*/
 /* point matrix and resultant matrix and does scaling op   */
 /* and stores it in resultant matrix                       */
 /* ------------------------------------------------------- */
@@ -387,6 +388,29 @@ void reflectionx(int a[3][15], int b[3][15])
 
     // Refection Operation    
     matrixMultiply(rfx, a, b);
+}
+
+/* ------------------------------------------------------- */
+/* Function for Reflection Operationa about yaxis.Asks for */
+/* point matrix and resultant matrix and does scaling op   */
+/* and stores it in resultant matrix                       */
+/* ------------------------------------------------------- */
+void reflectiony(int a[3][15], int b[3][15])
+{
+    int rfy[3][3]; // Rotation Matrix
+    // Initialising Rotation Matrix
+    rfy[0][0] = -1;
+    rfy[0][1] = 0;
+    rfy[0][2] = 0;
+    rfy[1][0] = 0;
+    rfy[1][1] = 1;
+    rfy[1][2] = 0;
+    rfy[2][0] = 0;
+    rfy[2][1] = 0;
+    rfy[2][2] = 1;
+
+    // Refection Operation    
+    matrixMultiply(rfy, a, b);
 }
 
 
