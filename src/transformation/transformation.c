@@ -13,7 +13,8 @@
 void matrixMultiply(int a[3][3], int b[3][15], int c[3][15]); //For Matrix Multiplication
 void doubleMatrixMultiply(double a[3][3], double b[3][15], double c[3][15]);
 void displayMatrix(int a[3][15]); //For Displaying Matrix
-//Translation Functions
+//Transformation Functions
+int *getTranslationMatrix(int tx, int ty);                           //To get the translation Matrix
 void translate(int tx, int ty, int a[3][15], int b[3][15]);          //For Translation Operation
 void rotationOrigin(int degree, int a[3][15], int b[3][15]);         //For Rotation about Origin
 void rotationPoint(int degree, int a[3][15], int b[3][15]);          //For Rotation about First Point
@@ -238,13 +239,12 @@ void displayMatrix(int a[3][15])
 }
 
 /* ------------------------------------------------------- */
-/* Function for Translation Operation. Asks for translation*/
-/* Values, point matrix and resultant matrix and does the  */
-/* Translation operation.                                  */
+/* Generates Translation Matrix. Asks for translation      */
+/* Values and returns the the translation matix            */
 /* ------------------------------------------------------- */
-void translate(int tx, int ty, int a[3][15], int b[3][15])
+int *getTranslationMatrix(int tx, int ty)
 {
-    int t[3][3]; //Translation Matrix
+    static int t[3][3]; //Translation Matrix
     //Initialising Translation Matrix
     t[0][0] = 1;
     t[0][1] = 0;
@@ -255,7 +255,28 @@ void translate(int tx, int ty, int a[3][15], int b[3][15])
     t[2][0] = 0;
     t[2][1] = 0;
     t[2][2] = 1;
-    matrixMultiply(t, a, b);
+
+    return &t[0][0];
+}
+
+/* ------------------------------------------------------- */
+/* Function for Translation Operation. Asks for translation*/
+/* Values, point matrix and resultant matrix and does the  */
+/* Translation operation.                                  */
+/* ------------------------------------------------------- */
+void translate(int tx, int ty, int a[3][15], int b[3][15])
+{
+    int translationMatrix[3][3];
+    int *t = getTranslationMatrix(tx, ty);
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            translationMatrix[i][j] = *((t + i * 3) + j);
+        }
+    }
+
+    matrixMultiply(translationMatrix, a, b);
 }
 
 /* ------------------------------------------------------- */
@@ -450,7 +471,6 @@ void reflectionLine(double m, double c, int a[3][15], int b[3][15])
     // Step 5: Shift/Translation where T(0, c)
     translate(0, c, temp4, b);
 }
-
 
 /* ------------------------------------------------------- */
 /* Function to initialize. Sets clear color, fill color    */
