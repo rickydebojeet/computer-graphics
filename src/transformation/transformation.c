@@ -12,9 +12,9 @@
 // Utility Functions
 void matrixMultiply(int a[3][3], int b[3][15], int c[3][15]); //For Matrix Multiplication
 void doubleMatrixMultiply(double a[3][3], double b[3][15], double c[3][15]);
+void doubleTranformMultiply(double a[3][3], double b[3][3], double c[3][3]);
 void displayMatrix(int a[3][15]); //For Displaying Matrix
 //Transformation Functions
-int *getTranslationMatrix(int tx, int ty);                           //To get the translation Matrix
 void translate(int tx, int ty, int a[3][15], int b[3][15]);          //For Translation Operation
 void rotationOrigin(int degree, int a[3][15], int b[3][15]);         //For Rotation about Origin
 void rotationPoint(int degree, int a[3][15], int b[3][15]);          //For Rotation about First Point
@@ -221,6 +221,21 @@ void doubleMatrixMultiply(double a[3][3], double b[3][15], double c[3][15])
     }
 }
 
+void doubleTranformMultiply(double a[3][3], double b[3][3], double c[3][3])
+{
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            c[i][j] = 0;
+            for (int k = 0; k < 3; k++)
+            {
+                c[i][j] += (a[i][k] * b[k][j]);
+            }
+        }
+    }
+}
+
 /* ------------------------------------------------------- */
 /* Function for displaying matrix. Asks for a matrix and   */
 /* Prints the result in the screen                         */
@@ -239,12 +254,13 @@ void displayMatrix(int a[3][15])
 }
 
 /* ------------------------------------------------------- */
-/* Generates Translation Matrix. Asks for translation      */
-/* Values and returns the the translation matix            */
+/* Function for Translation Operation. Asks for translation*/
+/* Values, point matrix and resultant matrix and does the  */
+/* Translation operation.                                  */
 /* ------------------------------------------------------- */
-int *getTranslationMatrix(int tx, int ty)
+void translate(int tx, int ty, int a[3][15], int b[3][15])
 {
-    static int t[3][3]; //Translation Matrix
+    int t[3][3]; //Translation Matrix
     //Initialising Translation Matrix
     t[0][0] = 1;
     t[0][1] = 0;
@@ -256,27 +272,7 @@ int *getTranslationMatrix(int tx, int ty)
     t[2][1] = 0;
     t[2][2] = 1;
 
-    return &t[0][0];
-}
-
-/* ------------------------------------------------------- */
-/* Function for Translation Operation. Asks for translation*/
-/* Values, point matrix and resultant matrix and does the  */
-/* Translation operation.                                  */
-/* ------------------------------------------------------- */
-void translate(int tx, int ty, int a[3][15], int b[3][15])
-{
-    int translationMatrix[3][3];
-    int *t = getTranslationMatrix(tx, ty);
-    for (int i = 0; i < 3; i++)
-    {
-        for (int j = 0; j < 3; j++)
-        {
-            translationMatrix[i][j] = *((t + i * 3) + j);
-        }
-    }
-
-    matrixMultiply(translationMatrix, a, b);
+    matrixMultiply(t, a, b);
 }
 
 /* ------------------------------------------------------- */
@@ -293,9 +289,9 @@ void rotationOrigin(int degree, int a[3][15], int b[3][15])
     double r[3][3]; //Rotation Matrix
     // Initialising Rotation Matrix
     r[0][0] = cos(radian);
-    r[0][1] = sin(radian);
+    r[0][1] = -sin(radian);
     r[0][2] = 0;
-    r[1][0] = -sin(radian);
+    r[1][0] = sin(radian);
     r[1][1] = cos(radian);
     r[1][2] = 0;
     r[2][0] = 0;
@@ -337,16 +333,73 @@ void rotationOrigin(int degree, int a[3][15], int b[3][15])
 void rotationPoint(int degree, int a[3][15], int b[3][15])
 {
     // Temporary Matrix to store intermediate values
-    int temp1[3][15], temp2[3][15];
+    double temp1[3][3], temp2[3][3], init[3][15], final[3][15];
+
+    // Initialising the temporary double variables
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 15; j++)
+        {
+            init[i][j] = a[i][j];
+            final[i][j] = b[i][j];
+        }
+    }
 
     // Step 1: Shift/Translation where T(-firstxcoord, -firstycoord)
-    translate(-a[0][0], -a[1][0], a, temp1);
+    double t1[3][3]; //Translation Matrix
+    //Initialising Translation Matrix
+    t1[0][0] = 1;
+    t1[0][1] = 0;
+    t1[0][2] = -a[0][0];
+    t1[1][0] = 0;
+    t1[1][1] = 1;
+    t1[1][2] = -a[1][0];
+    t1[2][0] = 0;
+    t1[2][1] = 0;
+    t1[2][2] = 1;
 
     // Step 2: Rotation about origin with R(degree)
-    rotationOrigin(degree, temp1, temp2);
+    // Converting degree into radians
+    double radian = (((double)degree) * PI) / 180.0;
+
+    double r[3][3]; //Rotation Matrix
+    // Initialising Rotation Matrix
+    r[0][0] = cos(radian);
+    r[0][1] = -sin(radian);
+    r[0][2] = 0;
+    r[1][0] = sin(radian);
+    r[1][1] = cos(radian);
+    r[1][2] = 0;
+    r[2][0] = 0;
+    r[2][1] = 0;
+    r[2][2] = 1;
 
     // Step 3: Shift/Translation where T(firstxcoord, firstycoord)
-    translate(a[0][0], a[1][0], temp2, b);
+    double t2[3][3]; //Translation Matrix
+    //Initialising Translation Matrix
+    t2[0][0] = 1;
+    t2[0][1] = 0;
+    t2[0][2] = a[0][0];
+    t2[1][0] = 0;
+    t2[1][1] = 1;
+    t2[1][2] = a[1][0];
+    t2[2][0] = 0;
+    t2[2][1] = 0;
+    t2[2][2] = 1;
+
+    doubleTranformMultiply(t2, r, temp1);
+    doubleTranformMultiply(temp1, t1, temp2);
+
+    doubleMatrixMultiply(temp2, init, final);
+
+    // Storing the final results
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 15; j++)
+        {
+            b[i][j] = final[i][j];
+        }
+    }
 }
 
 /* ------------------------------------------------------- */
