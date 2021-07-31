@@ -501,28 +501,100 @@ void reflectiony(int a[3][15], int b[3][15])
 void reflectionLine(double m, double c, int a[3][15], int b[3][15])
 {
     // Temporary Matrix to store intermediate values
-    int temp1[3][15], temp2[3][15], temp3[3][15], temp4[3][15], degree;
+    double temp1[3][3], temp2[3][3], temp3[3][3], temp4[3][3];
+    double init[3][15], final[3][15];
+
+    // Initialising the temporary double variables
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 15; j++)
+        {
+            init[i][j] = a[i][j];
+            final[i][j] = b[i][j];
+        }
+    }
 
     // Step 1: Shift/Translation where T(0, -c)
-    translate(0, -c, a, temp1);
-    printf("\nAfter Translation:\n");
+    double t1[3][3]; //Translation Matrix
+    //Initialising Translation Matrix
+    t1[0][0] = 1;
+    t1[0][1] = 0;
+    t1[0][2] = 0;
+    t1[1][0] = 0;
+    t1[1][1] = 1;
+    t1[1][2] = -c;
+    t1[2][0] = 0;
+    t1[2][1] = 0;
+    t1[2][2] = 1;
 
     // Step 2: Rotation about origin with R(-degree) where tan(degree) = m
     double radian = atan(m);
-    degree = radian * 180 / PI;
-    printf("\nDegree: %d\n", degree);
-    rotationOrigin(degree, temp1, temp2);
-    printf("\nAfter Rotation:\n");
+    double r1[3][3]; //Rotation Matrix
+    // Initialising Rotation Matrix
+    r1[0][0] = cos(-radian);
+    r1[0][1] = -sin(-radian);
+    r1[0][2] = 0;
+    r1[1][0] = sin(-radian);
+    r1[1][1] = cos(-radian);
+    r1[1][2] = 0;
+    r1[2][0] = 0;
+    r1[2][1] = 0;
+    r1[2][2] = 1;
 
     // Step 3: Reflection about x - axis
-    reflectionx(temp2, temp3);
-    printf("\nAfter Reflection\n");
+    double rfx[3][3]; // Rotation Matrix
+    // Initialising Rotation Matrix
+    rfx[0][0] = 1;
+    rfx[0][1] = 0;
+    rfx[0][2] = 0;
+    rfx[1][0] = 0;
+    rfx[1][1] = -1;
+    rfx[1][2] = 0;
+    rfx[2][0] = 0;
+    rfx[2][1] = 0;
+    rfx[2][2] = 1;
 
     //Step 4: Rotation about origin with R(degree) where tan(degree) = m
-    rotationOrigin(-degree, temp3, temp4);
+    double r2[3][3]; //Rotation Matrix
+    // Initialising Rotation Matrix
+    r2[0][0] = cos(radian);
+    r2[0][1] = -sin(radian);
+    r2[0][2] = 0;
+    r2[1][0] = sin(radian);
+    r2[1][1] = cos(radian);
+    r2[1][2] = 0;
+    r2[2][0] = 0;
+    r2[2][1] = 0;
+    r2[2][2] = 1;
 
     // Step 5: Shift/Translation where T(0, c)
-    translate(0, c, temp4, b);
+    double t2[3][3]; //Translation Matrix
+    //Initialising Translation Matrix
+    t2[0][0] = 1;
+    t2[0][1] = 0;
+    t2[0][2] = 0;
+    t2[1][0] = 0;
+    t2[1][1] = 1;
+    t2[1][2] = c;
+    t2[2][0] = 0;
+    t2[2][1] = 0;
+    t2[2][2] = 1;
+
+    doubleTranformMultiply(t2, r2, temp1);
+    doubleTranformMultiply(temp1, rfx, temp2);
+    doubleTranformMultiply(temp2, r1, temp3);
+    doubleTranformMultiply(temp3, t1, temp4);
+
+    doubleMatrixMultiply(temp4, init, final);
+
+    // Storing the final results
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 15; j++)
+        {
+            b[i][j] = final[i][j];
+        }
+    }
 }
 
 /* ------------------------------------------------------- */
