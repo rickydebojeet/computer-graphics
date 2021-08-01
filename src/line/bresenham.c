@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     glutInitWindowPosition(0, 0);
     glutInitWindowSize(600, 600);
     // Create the window with title "Bresenham Line Generation Algorithm"
-    glutCreateWindow("Bresenham Line Generation Algorithm");
+    glutCreateWindow("Bresenham Line Generation Algorithm (0-600)");
 
     // Initialize drawing colors
     myInit();
@@ -99,12 +99,17 @@ void bresenham()
     glBegin(GL_POINTS);
     glVertex2i(X, Y);
     printf("(x, y) : (%d, %d)\n", X, Y);
+    // The points are specified
+    glEnd();
+    glFlush();
 
     // If m < 1
     if (dx > dy) {
         int d = (2 * dy) - dx;
         while (X < X2)
         {
+            // Plot the points
+            glBegin(GL_POINTS);
             X = X + 1;
             if (d < 0)
                 d = d + (2 * dy);
@@ -114,12 +119,17 @@ void bresenham()
             }
             glVertex2i(X, Y);
             printf("(x, y) : (%d, %d)\n", X, Y);
+            // The points are specified
+            glEnd();
+            glFlush();
         }
     }
     else{
         int d = (2 * dx) - dy;
         while (Y < Y2)
         {
+            // Plot the points
+            glBegin(GL_POINTS);
             Y = Y + 1;
             if (d < 0)
                 d = d + (2 * dx);
@@ -129,11 +139,11 @@ void bresenham()
             }
             glVertex2i(X, Y);
             printf("(x, y) : (%d, %d)\n", X, Y);
+            // The points are specified
+            glEnd();
+            glFlush();
         }
     }
-    // The points are specified
-    glEnd();
-    glFlush();
 }
 
 /* ------------------------------------------------------- */
