@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     glutInitWindowPosition(0, 0);
     glutInitWindowSize(600, 600);
     // Create the window with title "DDA Line Drawing"
-    glutCreateWindow("DDA Line Drawing");
+    glutCreateWindow("DDA Line Drawing (0-600, 0-600)");
 
     // Initialize drawing colors
     myInit();
@@ -109,20 +109,22 @@ void dda()
     glClear(GL_COLOR_BUFFER_BIT);
     // Resets Modelview Matrix
     glLoadIdentity();
-    // Plot the points
-    glBegin(GL_POINTS);
+    
 
     for (int k = 0; k < step; k++)
     {
+        // Plot the points
+        glBegin(GL_POINTS);
         // Specify Points
         glVertex2f(x, y);
         printf("(x, y) : (%d, %d)\n", (int)(x + 0.5), (int)(y + 0.5));
         x = x + Xinc;
         y = y + Yinc;
+        // The points are specified
+        glEnd();
+        glFlush();
     }
-    // The points are specified
-    glEnd();
-    glFlush();
+    
 }
 
 /* ------------------------------------------------------- */
