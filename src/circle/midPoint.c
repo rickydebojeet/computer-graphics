@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
     glutInitWindowPosition(0, 0);
     glutInitWindowSize(600, 600);
     // Create the window with title "Mid Point Circle Drawing Algorithm"
-    glutCreateWindow("Mid Point Circle Drawing Algorithm");
+    glutCreateWindow("Mid Point Circle Drawing Algorithm (-300-300)");
 
     // Initialize drawing colors
     myInit();
@@ -87,10 +87,10 @@ void midpoint()
     glClear(GL_COLOR_BUFFER_BIT);
     // Resets Modelview Matrix
     glLoadIdentity();
-    // Plot the points
-    glBegin(GL_POINTS);
     while (X < Y)
     {
+        // Plot the points
+        glBegin(GL_POINTS);
         glVertex2i(X, Y);
         glVertex2i(-X, Y);
         glVertex2i(-X, -Y);
@@ -117,10 +117,10 @@ void midpoint()
             Y = Y - 1;
             p = p + (2 * (X - Y)) + 1;
         }
+        // The points are specified
+        glEnd();
+        glFlush();
     }
-    // The points are specified
-    glEnd();
-    glFlush();
 }
 
 /* ------------------------------------------------------- */
