@@ -11,8 +11,9 @@ int pointMatrix[3][15];
 float bColor[3], fillColor[3];
 
 // Function Declarations
-void fourConnectedFill(GLint, GLint, float *, float *);
-void eightConnectedFill(GLint, GLint, float *, float *);
+void fourConnectedFill(GLint, GLint, float *, float *);  // Function for Four Connected Filling
+void eightConnectedFill(GLint, GLint, float *, float *); // Function for Eight Connected Filling
+void floodFill(GLint, GLint, float *, float *);          //Function for Flood Filling
 // Display Functions
 void display(void);
 void reshape(int, int);
@@ -213,7 +214,7 @@ int main(char argc, char *argv[])
 
     int choice;
     printf("\nEnter your filling operation\n");
-    printf("1.4-Connected\n2.8-Connected\n");
+    printf("1.4-Connected\n2.8-Connected\n3.Flood Filling\n");
     scanf("%d", &choice);
     if (choice == 1)
     {
@@ -222,6 +223,10 @@ int main(char argc, char *argv[])
     else if (choice == 2)
     {
         option = 2;
+    }
+    else if (choice == 3)
+    {
+        option = 3;
     }
     else
     {
@@ -236,7 +241,7 @@ int main(char argc, char *argv[])
     glutInitWindowPosition(200, 200);
     glutInitWindowSize(640, 480);
     // Create the window with title "Window name"
-    glutCreateWindow("Boundary Filling Operation");
+    glutCreateWindow("Boundary Filling Operation (Click Mouse)");
 
     // Initialize drawing colors
     myInit();
@@ -258,9 +263,10 @@ void fourConnectedFill(GLint x, GLint y, float *bgcolor, float *fcolor)
 {
     float intColor[3];
     glReadPixels(x, y, 1.0, 1.0, GL_RGB, GL_FLOAT, intColor);
-    if ((intColor[0] != bgcolor[0] || intColor[1] != bgcolor[1] || 
-    intColor[2] != bgcolor[2]) && (intColor[0] != fcolor[0] || 
-    intColor[1] != fcolor[1] || intColor[2] != fcolor[2]))
+    if ((intColor[0] != bgcolor[0] || intColor[1] != bgcolor[1] ||
+         intColor[2] != bgcolor[2]) &&
+        (intColor[0] != fcolor[0] ||
+         intColor[1] != fcolor[1] || intColor[2] != fcolor[2]))
     {
         glColor3f(fcolor[0], fcolor[1], fcolor[2]);
         glBegin(GL_POINTS);
@@ -278,40 +284,54 @@ void fourConnectedFill(GLint x, GLint y, float *bgcolor, float *fcolor)
 /* Function for 8-Connected fill algorithms. Asks for point*/
 /* fill color and background color and does the operation  */
 /* ------------------------------------------------------- */
-// void eightConnectedFill(GLint x, GLint y, color bgcolor, color fcolor)
-// {
-//     color intColor = getColor(x, y);
-//     if (intColor.red != bgcolor.red && intColor.green != bgcolor.green &&
-//         intColor.blue != bgcolor.blue && intColor.red != fillColor[0] &&
-//         intColor.green != fillColor[1] && intColor.blue != fillColor[2])
-//     {
-//         setColor(x, y, fcolor);
-//         eightConnectedFill((x + 1), y, bgcolor, fcolor);
-//         eightConnectedFill((x - 1), y, bgcolor, fcolor);
-//         eightConnectedFill(x, (y + 1), bgcolor, fcolor);
-//         eightConnectedFill(x, (y - 1), bgcolor, fcolor);
-//         eightConnectedFill((x + 1), (y + 1), bgcolor, fcolor);
-//         eightConnectedFill((x - 1), (y + 1), bgcolor, fcolor);
-//         eightConnectedFill((x - 1), (y - 1), bgcolor, fcolor);
-//         eightConnectedFill((x + 1), (y - 1), bgcolor, fcolor);
-//     }
-// }
+void eightConnectedFill(GLint x, GLint y, float *bgcolor, float *fcolor)
+{
+    float intColor[3];
+    glReadPixels(x, y, 1.0, 1.0, GL_RGB, GL_FLOAT, intColor);
+    if ((intColor[0] != bgcolor[0] || intColor[1] != bgcolor[1] ||
+         intColor[2] != bgcolor[2]) &&
+        (intColor[0] != fcolor[0] ||
+         intColor[1] != fcolor[1] || intColor[2] != fcolor[2]))
+    {
+        glColor3f(fcolor[0], fcolor[1], fcolor[2]);
+        glBegin(GL_POINTS);
+        glVertex2i(x, y);
+        glEnd();
+        glFlush();
+        eightConnectedFill((x + 1), y, bgcolor, fcolor);
+        eightConnectedFill((x - 1), y, bgcolor, fcolor);
+        eightConnectedFill(x, (y + 1), bgcolor, fcolor);
+        eightConnectedFill(x, (y - 1), bgcolor, fcolor);
+        eightConnectedFill((x + 1), (y + 1), bgcolor, fcolor);
+        eightConnectedFill((x - 1), (y + 1), bgcolor, fcolor);
+        eightConnectedFill((x - 1), (y - 1), bgcolor, fcolor);
+        eightConnectedFill((x + 1), (y - 1), bgcolor, fcolor);
+    }
+}
 
-// void floodFill(GLint x, GLint y, color oldColor, color newColor)
-// {
+/* ------------------------------------------------------- */
+/* Function for Flood filling algorithms. Asks for point,  */
+/* fill color and background color and does the operation  */
+/* ------------------------------------------------------- */
+void floodFill(GLint x, GLint y, float *oldColor, float *fcolor)
+{
+    float intColor[3];
+    glReadPixels(x, y, 1.0, 1.0, GL_RGB, GL_FLOAT, intColor);
 
-//     color intColor = getColor(x, y);
-
-//     if (intColor.red == oldColor.red && intColor.green == oldColor.green && intColor.blue == oldColor.blue)
-//     {
-//         setColor(x, y, newColor);
-//         floodFill(x + 1, y, oldColor, newColor);
-//         floodFill(x - 1, y, oldColor, newColor);
-//         floodFill(x, y + 1, oldColor, newColor);
-//         floodFill(x, y - 1, oldColor, newColor);
-//     }
-//     return;
-// }
+    if (intColor[0] == oldColor[0] && intColor[1] == oldColor[1] && intColor[2] == oldColor[2])
+    {
+        glColor3f(fcolor[0], fcolor[1], fcolor[2]);
+        glBegin(GL_POINTS);
+        glVertex2i(x, y);
+        glEnd();
+        glFlush();
+        floodFill(x + 1, y, oldColor, fcolor);
+        floodFill(x - 1, y, oldColor, fcolor);
+        floodFill(x, y + 1, oldColor, fcolor);
+        floodFill(x, y - 1, oldColor, fcolor);
+    }
+    return;
+}
 
 /* ------------------------------------------------------- */
 /* Function to initialize. Sets clear color, fill color    */
@@ -389,6 +409,10 @@ void reshape(int w, int h)
     glMatrixMode(GL_MODELVIEW);
 }
 
+/* ------------------------------------------------------- */
+/* Function for mouse properties.Sets the starting point or*/
+/* co-ordinates of filling algorithm                       */
+/* ------------------------------------------------------- */
 void mouse(int btn, int state, int x, int y)
 {
     y = 480 - y;
@@ -396,7 +420,23 @@ void mouse(int btn, int state, int x, int y)
     {
         if (state == GLUT_DOWN)
         {
-            fourConnectedFill(x, y, bColor, fillColor);
+            if (option == 1)
+            {
+                fourConnectedFill(x, y, bColor, fillColor);
+            }
+            else if (option == 2)
+            {
+                eightConnectedFill(x, y, bColor, fillColor);
+            }
+            else if (option == 3)
+            {
+                float oldColor[] = {0.0, 0.0, 0.0};
+                floodFill(x, y, oldColor, fillColor);
+            }
+            else
+            {
+
+            }
         }
     }
 }
