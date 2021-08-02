@@ -3,6 +3,11 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
 
 // Function Declarations
 void myInit();
@@ -123,6 +128,7 @@ void dda()
         // The points are specified
         glEnd();
         glFlush();
+        usleep(1000);
     }
     
 }
