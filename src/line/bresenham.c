@@ -3,6 +3,11 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
 
 // Function Defination
 void myInit();
@@ -122,6 +127,7 @@ void bresenham()
             // The points are specified
             glEnd();
             glFlush();
+            usleep(1000);
         }
     }
     else{
@@ -142,6 +148,7 @@ void bresenham()
             // The points are specified
             glEnd();
             glFlush();
+            usleep(1000);
         }
     }
 }
