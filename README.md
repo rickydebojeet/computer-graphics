@@ -1,4 +1,4 @@
-# compiler-programs
+# Computer Graphics
 
 **This Repository contains C made during our couse of Computer Graphics (CS604).** 
 
